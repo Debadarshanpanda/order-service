@@ -1,0 +1,60 @@
+name: Java CI with Maven
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.14.1
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: java-build
+        path: target/*.jar
+
+  Package:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v5.0.0
+      with:
+          name: java-build
+          path: staging
+      
+    - name: List downloaded files
+      run: ls staging
+
+    
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3.14.1
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build with Maven
+      run: mvn test
+
