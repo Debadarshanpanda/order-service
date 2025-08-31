@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Pdeb@5805
+      MYSQL_DATABASE: order_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Pdeb@5805
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  order-service:
+    build: ./order-service  # assuming Dockerfile is inside order-service directory
+    container_name: order-service
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      SPRING_APPLICATION_NAME: order-service
+      SERVER_PORT: 9191
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/order_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Pdeb@5805
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "9191:9191"
+
+volumes:
+  mysql_data:
