@@ -5,6 +5,7 @@ on:
     inputs:
       TARGE_ENVIRONMENT:
         type: environment
+        default: dev
         
 
 jobs:
